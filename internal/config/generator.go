@@ -415,6 +415,13 @@ func (c *JiraCLIConfigGenerator) configureServerAndLoginDetails() error {
 }
 
 func (c *JiraCLIConfigGenerator) verifyLoginDetails(server, login string) error {
+	// Skip verification for session auth type - cookie needs to be set separately via 'jira session set'
+	if c.value.authType == jira.AuthTypeSession {
+		c.value.server = strings.TrimRight(server, "/")
+		c.value.login = login
+		return nil
+	}
+
 	s := cmdutil.Info("Verifying login details...")
 	defer s.Stop()
 
@@ -448,6 +455,11 @@ func (c *JiraCLIConfigGenerator) verifyLoginDetails(server, login string) error 
 }
 
 func (c *JiraCLIConfigGenerator) configureServerMeta(server, login string) error {
+	// Skip server meta fetch for session auth type - can be done after cookie is set
+	if c.value.authType == jira.AuthTypeSession {
+		return nil
+	}
+
 	s := cmdutil.Info("Fetching server details...")
 	defer s.Stop()
 
@@ -481,6 +493,11 @@ func (c *JiraCLIConfigGenerator) configureServerMeta(server, login string) error
 
 //nolint:gocyclo
 func (c *JiraCLIConfigGenerator) configureProjectAndBoardDetails() error {
+	// Skip project and board details for session auth - can be configured after cookie is set
+	if c.value.authType == jira.AuthTypeSession {
+		return nil
+	}
+
 	project := c.usrCfg.Project
 	board := c.usrCfg.Board
 
