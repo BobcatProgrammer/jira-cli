@@ -3,10 +3,10 @@ package serverinfo
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/ankitpokhrel/jira-cli/api"
-	"github.com/ankitpokhrel/jira-cli/internal/cmdutil"
-	"github.com/ankitpokhrel/jira-cli/internal/view"
-	"github.com/ankitpokhrel/jira-cli/pkg/jira"
+	"github.com/BobcatProgrammer/jira-cli/api"
+	"github.com/BobcatProgrammer/jira-cli/internal/cmdutil"
+	"github.com/BobcatProgrammer/jira-cli/internal/view"
+	"github.com/BobcatProgrammer/jira-cli/pkg/jira"
 )
 
 // NewCmdServerInfo is a server info command.

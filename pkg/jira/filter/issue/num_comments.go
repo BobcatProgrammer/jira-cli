@@ -1,7 +1,7 @@
 package issue
 
 import (
-	"github.com/ankitpokhrel/jira-cli/pkg/jira/filter"
+	"github.com/BobcatProgrammer/jira-cli/pkg/jira/filter"
 )
 
 // KeyIssueNumComments is a filter key for issue comments.

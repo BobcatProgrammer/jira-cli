@@ -9,30 +9,30 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/ankitpokhrel/jira-cli/internal/cmd/board"
-	"github.com/ankitpokhrel/jira-cli/internal/cmd/completion"
-	"github.com/ankitpokhrel/jira-cli/internal/cmd/epic"
-	initCmd "github.com/ankitpokhrel/jira-cli/internal/cmd/init"
-	"github.com/ankitpokhrel/jira-cli/internal/cmd/issue"
-	"github.com/ankitpokhrel/jira-cli/internal/cmd/man"
-	"github.com/ankitpokhrel/jira-cli/internal/cmd/me"
-	"github.com/ankitpokhrel/jira-cli/internal/cmd/open"
-	"github.com/ankitpokhrel/jira-cli/internal/cmd/project"
-	"github.com/ankitpokhrel/jira-cli/internal/cmd/release"
-	"github.com/ankitpokhrel/jira-cli/internal/cmd/serverinfo"
-	"github.com/ankitpokhrel/jira-cli/internal/cmd/session"
-	"github.com/ankitpokhrel/jira-cli/internal/cmd/sprint"
-	"github.com/ankitpokhrel/jira-cli/internal/cmd/version"
-	"github.com/ankitpokhrel/jira-cli/internal/cmdutil"
-	jiraConfig "github.com/ankitpokhrel/jira-cli/internal/config"
-	"github.com/ankitpokhrel/jira-cli/pkg/jira"
-	"github.com/ankitpokhrel/jira-cli/pkg/netrc"
+	"github.com/BobcatProgrammer/jira-cli/internal/cmd/board"
+	"github.com/BobcatProgrammer/jira-cli/internal/cmd/completion"
+	"github.com/BobcatProgrammer/jira-cli/internal/cmd/epic"
+	initCmd "github.com/BobcatProgrammer/jira-cli/internal/cmd/init"
+	"github.com/BobcatProgrammer/jira-cli/internal/cmd/issue"
+	"github.com/BobcatProgrammer/jira-cli/internal/cmd/man"
+	"github.com/BobcatProgrammer/jira-cli/internal/cmd/me"
+	"github.com/BobcatProgrammer/jira-cli/internal/cmd/open"
+	"github.com/BobcatProgrammer/jira-cli/internal/cmd/project"
+	"github.com/BobcatProgrammer/jira-cli/internal/cmd/release"
+	"github.com/BobcatProgrammer/jira-cli/internal/cmd/serverinfo"
+	"github.com/BobcatProgrammer/jira-cli/internal/cmd/session"
+	"github.com/BobcatProgrammer/jira-cli/internal/cmd/sprint"
+	"github.com/BobcatProgrammer/jira-cli/internal/cmd/version"
+	"github.com/BobcatProgrammer/jira-cli/internal/cmdutil"
+	jiraConfig "github.com/BobcatProgrammer/jira-cli/internal/config"
+	"github.com/BobcatProgrammer/jira-cli/pkg/jira"
+	"github.com/BobcatProgrammer/jira-cli/pkg/netrc"
 
 	"github.com/zalando/go-keyring"
 )
 
 const (
-	jiraCLIHelpLink  = "https://github.com/ankitpokhrel/jira-cli#getting-started"
+	jiraCLIHelpLink  = "https://github.com/BobcatProgrammer/jira-cli#getting-started"
 	jiraAPITokenLink = "https://id.atlassian.com/manage-profile/security/api-tokens"
 )
 
@@ -216,7 +216,7 @@ func checkForSessionCookie(login string) {
 To set your session cookie from an exported browser session, run:
   jira session set
 
-For more details, see: https://github.com/ankitpokhrel/jira-cli#session-cookie-auth
+For more details, see: https://github.com/BobcatProgrammer/jira-cli#session-cookie-auth
 `
 
 	cmdutil.Warn(msg)

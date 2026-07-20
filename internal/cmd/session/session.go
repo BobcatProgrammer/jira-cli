@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/zalando/go-keyring"
 
-	"github.com/ankitpokhrel/jira-cli/internal/cmdutil"
+	"github.com/BobcatProgrammer/jira-cli/internal/cmdutil"
 )
 
 // NewCmdSession is a session command.

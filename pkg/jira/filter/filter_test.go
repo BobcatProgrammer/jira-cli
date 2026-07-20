@@ -5,8 +5,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/ankitpokhrel/jira-cli/pkg/jira/filter"
-	"github.com/ankitpokhrel/jira-cli/pkg/jira/filter/issue"
+	"github.com/BobcatProgrammer/jira-cli/pkg/jira/filter"
+	"github.com/BobcatProgrammer/jira-cli/pkg/jira/filter/issue"
 )
 
 func TestCollectionGet(t *testing.T) {
