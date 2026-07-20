@@ -155,10 +155,8 @@ func (c *JiraCLIConfigGenerator) Generate() (string, error) {
 		return "", err
 	}
 
-	if c.value.installation == jira.InstallationTypeLocal {
-		if err := c.configureLocalAuthType(); err != nil {
-			return "", err
-		}
+	if err := c.configureLocalAuthType(); err != nil {
+		return "", err
 	}
 
 	if c.usrCfg.AuthType != "" {
@@ -227,13 +225,19 @@ func (c *JiraCLIConfigGenerator) configureLocalAuthType() error {
 	authType := c.usrCfg.AuthType
 
 	if c.usrCfg.AuthType == "" {
+		options := []string{"basic", "bearer", "session", "mtls"}
+		if c.value.installation == jira.InstallationTypeCloud {
+			// Bearer (PAT) and mTLS auth aren't applicable to Jira Cloud.
+			options = []string{"basic", "session"}
+		}
+
 		qs := &survey.Select{
 			Message: "Authentication type:",
 			Help: `Authentication type could be: basic (login), bearer (PAT), session (browser cookie) or mtls (client certs)
 ? If you are using your login credentials, the auth type is probably 'basic' (most common for local installation)
 ? If you are using a personal access token, the auth type is probably 'bearer'
 ? If you are using an exported browser session cookie, the auth type is 'session'`,
-			Options: []string{"basic", "bearer", "session", "mtls"},
+			Options: options,
 			Default: "basic",
 		}
 		if err := survey.AskOne(qs, &authType); err != nil {
@@ -634,6 +638,12 @@ func (c *JiraCLIConfigGenerator) searchAndAssignBoard(project, keyword string) e
 }
 
 func (c *JiraCLIConfigGenerator) configureMetadata() error {
+	// Skip issue type/field metadata fetch for session auth - project wasn't
+	// configured yet either, so there is nothing to fetch metadata for.
+	if c.value.authType == jira.AuthTypeSession {
+		return nil
+	}
+
 	var err error
 
 	//nolint:mnd

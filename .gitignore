@@ -12,5 +12,6 @@ bin/
 coverage/
 vendor/
 /.gocache
+/jira
 
 .vscode/

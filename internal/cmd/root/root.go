@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"slices"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -82,6 +83,12 @@ func NewCmdRoot() *cobra.Command {
 		PersistentPreRun: func(cmd *cobra.Command, _ []string) {
 			subCmd := cmd.Name()
 			if !cmdRequireToken(subCmd) {
+				return
+			}
+
+			// The 'session set' command must be runnable without a token/cookie
+			// already present, since its whole purpose is to set the cookie.
+			if strings.HasPrefix(cmd.CommandPath(), "jira session") {
 				return
 			}
 
