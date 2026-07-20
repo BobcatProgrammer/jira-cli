@@ -27,23 +27,33 @@ func Client(config jira.Config) *jira.Client {
 	if config.Login == "" {
 		config.Login = viper.GetString("login")
 	}
-	if config.APIToken == "" {
-		config.APIToken = viper.GetString("api_token")
-	}
-	if config.APIToken == "" {
-		netrcConfig, _ := netrc.Read(config.Server, config.Login)
-		if netrcConfig != nil {
-			config.APIToken = netrcConfig.Password
-		}
-	}
-	if config.APIToken == "" {
-		secret, _ := keyring.Get("jira-cli", config.Login)
-		config.APIToken = secret
-	}
 	if config.AuthType == nil {
 		authType := jira.AuthType(viper.GetString("auth_type"))
 		config.AuthType = &authType
 	}
+
+	// For session auth, read cookie from keyring; for other types, read token from various sources
+	if config.AuthType != nil && *config.AuthType == jira.AuthTypeSession {
+		if config.APIToken == "" {
+			secret, _ := keyring.Get("jira-cli", config.Login)
+			config.APIToken = secret
+		}
+	} else {
+		if config.APIToken == "" {
+			config.APIToken = viper.GetString("api_token")
+		}
+		if config.APIToken == "" {
+			netrcConfig, _ := netrc.Read(config.Server, config.Login)
+			if netrcConfig != nil {
+				config.APIToken = netrcConfig.Password
+			}
+		}
+		if config.APIToken == "" {
+			secret, _ := keyring.Get("jira-cli", config.Login)
+			config.APIToken = secret
+		}
+	}
+
 	if config.Insecure == nil {
 		insecure := viper.GetBool("insecure")
 		config.Insecure = &insecure
@@ -61,11 +71,17 @@ func Client(config jira.Config) *jira.Client {
 		config.MTLSConfig.ClientKey = viper.GetString("mtls.client_key")
 	}
 
-	jiraClient = jira.NewClient(
-		config,
+	opts := []jira.ClientFunc{
 		jira.WithTimeout(clientTimeout),
 		jira.WithInsecureTLS(*config.Insecure),
-	)
+	}
+
+	// If using session auth, pass the cookie value to the client
+	if config.AuthType != nil && *config.AuthType == jira.AuthTypeSession {
+		opts = append(opts, jira.WithSessionCookie(config.APIToken))
+	}
+
+	jiraClient = jira.NewClient(config, opts...)
 
 	return jiraClient
 }

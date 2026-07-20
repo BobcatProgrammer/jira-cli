@@ -11,6 +11,8 @@ const (
 	AuthTypeBearer AuthType = "bearer"
 	// AuthTypeMTLS is a mTLS auth.
 	AuthTypeMTLS AuthType = "mtls"
+	// AuthTypeSession is a session cookie auth.
+	AuthTypeSession AuthType = "session"
 )
 
 // AuthType is a jira authentication type.

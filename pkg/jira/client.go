@@ -116,14 +116,15 @@ type Config struct {
 
 // Client is a jira client.
 type Client struct {
-	transport http.RoundTripper
-	insecure  bool
-	server    string
-	login     string
-	authType  *AuthType
-	token     string
-	timeout   time.Duration
-	debug     bool
+	transport     http.RoundTripper
+	insecure      bool
+	server        string
+	login         string
+	authType      *AuthType
+	token         string
+	sessionCookie string
+	timeout       time.Duration
+	debug         bool
 }
 
 // ClientFunc decorates option for client.
@@ -191,6 +192,13 @@ func WithTimeout(to time.Duration) ClientFunc {
 func WithInsecureTLS(ins bool) ClientFunc {
 	return func(c *Client) {
 		c.insecure = ins
+	}
+}
+
+// WithSessionCookie is a functional opt to attach a session cookie to the client.
+func WithSessionCookie(value string) ClientFunc {
+	return func(c *Client) {
+		c.sessionCookie = value
 	}
 }
 
@@ -283,6 +291,11 @@ func (c *Client) request(ctx context.Context, method, endpoint string, body []by
 		req.Header.Add("Authorization", "Bearer "+c.token)
 	case string(AuthTypeBasic):
 		req.SetBasicAuth(c.login, c.token)
+	case string(AuthTypeSession):
+		req.AddCookie(&http.Cookie{
+			Name:  "cloud.session.token",
+			Value: c.sessionCookie,
+		})
 	}
 
 	httpClient := &http.Client{Transport: c.transport}

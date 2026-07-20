@@ -119,15 +119,34 @@ See [FAQs](https://github.com/ankitpokhrel/jira-cli/discussions/categories/faqs)
 
 #### Authentication types
 
-The tool supports `basic`, `bearer` (Personal Access Token), and `mtls` (Client Certificates) authentication types. Basic auth is used by
-default.
+The tool supports `basic`, `bearer` (Personal Access Token), `session` (Browser Session Cookie), and `mtls` (Client Certificates) authentication types. Basic auth is used by default.
 
 * If you want to use PAT, you need to set `JIRA_AUTH_TYPE` as `bearer`.
+* If you want to use a browser session cookie, set `JIRA_AUTH_TYPE` as `session` and store your cookie using `jira session set`.
 * If you want to use `mtls` run `jira init`. Select installation type `Local`, and then select authentication type as `mtls`.
   * In case `JIRA_API_TOKEN` variable is set it will be used together with `mtls`.
 
 #### Shell completion
 Check `jira completion --help` for more info on setting up a bash/zsh shell completion.
+
+#### Session Cookie Authentication
+
+If you prefer to use your browser's session cookie instead of an API token or PAT, you can use session cookie authentication:
+
+1. Run `jira init` and select `session` as your authentication type.
+2. Export your `cloud.session.token` cookie from your browser:
+   - Open your browser's Developer Tools (F12)
+   - Go to the Application/Storage tab
+   - Find the Cookies section and locate your Jira domain
+   - Copy the `cloud.session.token` value
+3. Store the cookie securely using:
+   ```sh
+   jira session set
+   ```
+   - This will prompt you to paste the cookie value (input is masked)
+   - The cookie is stored securely in your system's keyring
+
+Once configured, you can use all jira-cli commands normally. The session cookie will be sent with each request.
 
 #### Multiple projects
 

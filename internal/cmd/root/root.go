@@ -19,6 +19,7 @@ import (
 	"github.com/ankitpokhrel/jira-cli/internal/cmd/project"
 	"github.com/ankitpokhrel/jira-cli/internal/cmd/release"
 	"github.com/ankitpokhrel/jira-cli/internal/cmd/serverinfo"
+	"github.com/ankitpokhrel/jira-cli/internal/cmd/session"
 	"github.com/ankitpokhrel/jira-cli/internal/cmd/sprint"
 	"github.com/ankitpokhrel/jira-cli/internal/cmd/version"
 	"github.com/ankitpokhrel/jira-cli/internal/cmdutil"
@@ -84,9 +85,15 @@ func NewCmdRoot() *cobra.Command {
 				return
 			}
 
-			// mTLS doesn't need Jira API Token.
-			if viper.GetString("auth_type") != string(jira.AuthTypeMTLS) {
+			// mTLS and session auth don't need separate API token validation.
+			authType := viper.GetString("auth_type")
+			if authType != string(jira.AuthTypeMTLS) && authType != string(jira.AuthTypeSession) {
 				checkForJiraToken(viper.GetString("server"), viper.GetString("login"))
+			}
+
+			// For session auth, verify session cookie exists
+			if authType == string(jira.AuthTypeSession) {
+				checkForSessionCookie(viper.GetString("login"))
 			}
 
 			configFile := viper.ConfigFileUsed()
@@ -136,6 +143,7 @@ func addChildCommands(cmd *cobra.Command) {
 		open.NewCmdOpen(),
 		me.NewCmdMe(),
 		serverinfo.NewCmdServerInfo(),
+		session.NewCmdSession(),
 		completion.NewCmdCompletion(),
 		version.NewCmdVersion(),
 		release.NewCmdRelease(),
@@ -152,6 +160,7 @@ func cmdRequireToken(cmd string) bool {
 		"completion",
 		"__complete", "__completeNoDesc", // Subcommand name during autocompletion call.
 		"man",
+		"session",
 	}
 	return !slices.Contains(allowList, cmd)
 }
@@ -184,6 +193,24 @@ Once you are done with the above steps, run 'jira init' to generate the config i
 
 For more details, see: %s
 `, jiraAPITokenLink, jiraCLIHelpLink)
+
+	cmdutil.Warn(msg)
+	os.Exit(1)
+}
+
+func checkForSessionCookie(login string) {
+	secret, _ := keyring.Get("jira-cli", login)
+	if secret != "" {
+		return
+	}
+
+	msg := `The tool needs a session cookie to function with session auth type.
+
+To set your session cookie from an exported browser session, run:
+  jira session set
+
+For more details, see: https://github.com/ankitpokhrel/jira-cli#session-cookie-auth
+`
 
 	cmdutil.Warn(msg)
 	os.Exit(1)
